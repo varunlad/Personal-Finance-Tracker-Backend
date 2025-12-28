@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // Test route
-app.get("/", (req, res) => {
+app.get("/", (res) => {
   res.send("API is running...");
 });
 
@@ -23,6 +23,7 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error(err));
-  
+
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
+// app.use("/api/ai", require("./routes/ai.routes"));
