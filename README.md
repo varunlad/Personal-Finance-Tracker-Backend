@@ -17,8 +17,3 @@ Password hashing with bcrypt
 JWT-based authentication
 Clean and scalable folder structure
 Ready for expense & income APIs
-
-🛣️ Roadmap :
-Expense & Income CRUD APIs
-Protected routes
-Monthly analytics
