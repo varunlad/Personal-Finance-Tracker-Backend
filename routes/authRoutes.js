@@ -78,7 +78,10 @@ router.post("/login", async (req, res) => {
 
     // Create token
     const token = jwt.sign(
-      { userId: user._id },
+      {
+        id: user.id, 
+        email: user.email,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -86,15 +89,14 @@ router.post("/login", async (req, res) => {
     res.json({
       token,
       user: {
-        id: user._id,
+        id: user.id,
         name: user.name,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 module.exports = router;
