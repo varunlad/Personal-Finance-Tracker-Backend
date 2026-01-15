@@ -35,4 +35,3 @@ router.put('/day/:date', upsertDayExpenses);
 router.delete('/:id', deleteExpense);
 
 module.exports = router;
-``
