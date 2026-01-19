@@ -28,6 +28,9 @@ const MONGO_URI = process.env.MONGO_URI;
 
 (async () => {
   try {
+    if (!MONGO_URI) throw new Error('MONGO_URI is not set');
+    if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is not set');
+
     await mongoose.connect(MONGO_URI);
     console.log('MongoDB Connected');
 
@@ -35,7 +38,7 @@ const MONGO_URI = process.env.MONGO_URI;
       console.log(`Server running on port ${PORT}`);
     });
   } catch (err) {
-    console.error('MongoDB connection error:', err);
+    console.error('MongoDB connection/startup error:', err);
     process.exit(1);
   }
 })();

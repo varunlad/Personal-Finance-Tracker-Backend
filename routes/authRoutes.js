@@ -36,7 +36,7 @@ router.post('/signup', async (req, res) => {
 
     return res.status(201).json({ success: true, message: 'Signup successful' });
   } catch (error) {
-    console.error(error);
+    console.error('signup error:', error);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 });
@@ -57,13 +57,13 @@ router.post('/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
-    
+
     res.json({
       token,
       user: { id: user.id, name: user.name, email: user.email },
     });
   } catch (error) {
-    console.error(error);
+    console.error('login error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
