@@ -1,4 +1,5 @@
 
+// routes/expense.routes.js
 const express = require('express');
 const {
   addExpenseAndGetUpdatedData,
@@ -6,7 +7,8 @@ const {
   getDayExpenses,
   upsertDayExpenses,
   deleteExpense,
-  getExpensesByDateRange, // ✅ add this import
+  getExpensesByDateRange,
+  getCategorySummaryByMonth,
 } = require('../controllers/expense.controller');
 const authMiddleware = require('../middleware/authMiddleware');
 
@@ -15,15 +17,18 @@ const router = express.Router();
 // All expense routes require auth
 router.use(authMiddleware);
 
-// Add a single expense; optionally return updated month via ?month=&year=
+// Add expenses (bulk); returns updated month via ?month=&year=
 router.post('/', addExpenseAndGetUpdatedData);
 
-// Get month grouped by day: [{ date, items: [{id,amount,category}], total }]
+// Get month grouped by day: [{ date, items: [{id,amount,category,note}], total }]
 router.get('/', getExpensesByMonthYear);
 
-// ✅ NEW: Get arbitrary date range grouped by day
-// Example: GET /api/expenses/range?start=2020-01-01&end=2025-12-31
+// Get arbitrary date range grouped by day
+// Example: GET /api/expenses/range?start=2026-01-01&end=2026-01-31
 router.get('/range', getExpensesByDateRange);
+
+// Monthly category summary (includes 'Credit Card' & 'EMIs' plus existing)
+router.get('/summary/category', getCategorySummaryByMonth);
 
 // Get a specific day
 router.get('/day/:date', getDayExpenses);
