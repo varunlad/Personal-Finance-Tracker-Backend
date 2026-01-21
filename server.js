@@ -7,6 +7,8 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
 const expenseRoutes = require('./routes/expense.routes');
+const recurringRoutes = require("./routes/recurring.routes");
+const profileRoutes = require('./routes/profile.routes');
 
 const app = express();
 
@@ -21,6 +23,8 @@ app.get('/health', (_req, res) => res.status(200).json({ status: 'ok' }));
 // --- Routes ---
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
+app.use("/api/recurring", recurringRoutes);
+app.use('/api/profile', profileRoutes);
 
 // --- DB & Server ---
 const PORT = process.env.PORT || 5000;
