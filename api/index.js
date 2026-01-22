@@ -16,7 +16,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://your-frontend.vercel.app" // replace with your actual frontend domain
+    "https://personal-finance-tracker-bul7.vercel.app/"
   ],
   credentials: true
 }));
