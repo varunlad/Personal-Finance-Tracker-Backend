@@ -1,3 +1,4 @@
+
 // server.js
 require('dotenv').config();
 const express = require('express');
@@ -11,58 +12,21 @@ const profileRoutes = require('./routes/profile.routes');
 
 const app = express();
 
-/* ---------------------------
-   CORS: whitelist-based setup
-   --------------------------- */
-
-const allowedOrigins = [
-  'http://localhost:3000',
-  process.env.FRONTEND_URL,     // e.g., https://personal-finance-tracker-bul7.vercel.app
-  process.env.FRONTEND_URL_2,   // optional
-].filter(Boolean);
-
-if (process.env.NODE_ENV !== 'production') {
-  app.use((req, _res, next) => {
-    console.log('Incoming Origin:', req.headers.origin || '(none)');
-    next();
-  });
-}
-
-const corsOptions = {
-  origin: (origin, cb) => {
-    if (!origin) return cb(null, true); // allow curl/Postman/health checks
-    if (allowedOrigins.includes(origin)) return cb(null, true);
-    return cb(new Error(`CORS blocked for origin: ${origin}`), false);
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  maxAge: 86400,
-};
-
-app.use(cors(corsOptions));
-// ✅ Express 5–compatible preflight handler:
-app.options('(.*)', cors(corsOptions));
-
+// --- Middlewares ---
+app.use(cors());
 app.use(express.json());
 
-/* ------------
-   Health check
-   ------------ */
+// --- Health ---
 app.get('/', (_req, res) => res.send('API is running...'));
 app.get('/health', (_req, res) => res.status(200).json({ status: 'ok' }));
 
-/* ------
-   Routes
-   ------ */
+// --- Routes ---
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use("/api/recurring", recurringRoutes);
 app.use('/api/profile', profileRoutes);
 
-/* --------------------
-   DB & Server startup
-   -------------------- */
+// --- DB & Server ---
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -76,7 +40,6 @@ const MONGO_URI = process.env.MONGO_URI;
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
-      console.log('CORS allowed origins:', allowedOrigins);
     });
   } catch (err) {
     console.error('MongoDB connection/startup error:', err);
