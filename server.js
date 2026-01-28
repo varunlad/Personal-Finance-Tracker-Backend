@@ -15,53 +15,34 @@ const app = express();
    CORS: whitelist-based setup
    --------------------------- */
 
-// Allowed origins (env-driven + sensible defaults)
 const allowedOrigins = [
   'http://localhost:3000',
-  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL,     // e.g., https://personal-finance-tracker-bul7.vercel.app
+  process.env.FRONTEND_URL_2,   // optional
 ].filter(Boolean);
 
-// For debugging: see what origin is coming in (optional; remove once stable)
-app.use((req, _res, next) => {
-  // Note: browsers set Origin on CORS requests; tools like curl/Postman often don't
-  // so null/undefined origin is normal for non-browser clients.
-  if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, _res, next) => {
     console.log('Incoming Origin:', req.headers.origin || '(none)');
-  }
-  next();
-});
+    next();
+  });
+}
 
-// CORS options
 const corsOptions = {
   origin: (origin, cb) => {
-    // Allow requests with no origin (like curl/Postman/health checks)
-    if (!origin) return cb(null, true);
-
-    // Strict match against whitelist
+    if (!origin) return cb(null, true); // allow curl/Postman/health checks
     if (allowedOrigins.includes(origin)) return cb(null, true);
-
-    // Optionally support a wildcard pattern (e.g., *.vercel.app):
-    // const vercelPattern = /^https?:\/\/([a-z0-9-]+\.)*vercel\.app$/i;
-    // if (vercelPattern.test(origin)) return cb(null, true);
-
     return cb(new Error(`CORS blocked for origin: ${origin}`), false);
   },
-  credentials: true, // allow cookies/Authorization headers
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'Accept',
-    'Origin'
-  ],
-  maxAge: 86400, // cache preflight for 24h
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  maxAge: 86400,
 };
 
-// Apply CORS early
 app.use(cors(corsOptions));
-// Ensure preflight is handled for all routes
-app.options('*', cors(corsOptions));
+// ✅ Express 5–compatible preflight handler:
+app.options('(.*)', cors(corsOptions));
 
 app.use(express.json());
 
